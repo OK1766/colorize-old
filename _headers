@@ -1,0 +1,23 @@
+/
+  Cache-Control: public, max-age=60
+  X-Content-Type-Options: nosniff
+
+/index.html
+  Cache-Control: public, max-age=60
+  X-Content-Type-Options: nosniff
+
+/*.html
+  Cache-Control: public, max-age=300
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+/robots.txt
+  Cache-Control: public, max-age=14400
+
+/js/*
+  Cache-Control: public, max-age=14400
+  X-Content-Type-Options: nosniff
+
+/og.jpg
+  Cache-Control: public, max-age=86400
