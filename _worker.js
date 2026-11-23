@@ -198,7 +198,7 @@ function seoMore(era, occ) {
   if (era) for (const o of SEO_OCC) { const p = "/colorize/" + era + "/" + o.id; if (o.id !== occ && seoLive(p)) li.push(`<li><a href="${p}">${seoEsc(SEO_ERA_BY[era].label)} ${seoEsc(o.noun)}</a></li>`); }
   if (occ) for (const e of SEO_ERAS) { const p = "/colorize/" + e.id + "/" + occ; if (e.id !== era && seoLive(p)) li.push(`<li><a href="${p}">${seoEsc(e.label)} ${seoEsc(SEO_OCC_BY[occ].noun)}</a></li>`); }
   const hubs = [era && seoLive("/colorize/" + era) ? `<a href="/colorize/${era}">all ${seoEsc(SEO_ERA_BY[era].label)} photos</a>` : "", occ && seoLive("/colorize/" + occ) ? `<a href="/colorize/${occ}">all ${seoEsc(SEO_OCC_BY[occ].noun)}</a>` : ""].filter(Boolean);
-  return `<h2>More guides</h2><ul>${li.slice(0, 8).join("")}</ul>${hubs.length ? `<p>${hubs.join(" · ")}</p>` : ""}<p class="muted">General guides: <a href="/how-to-colorize-old-family-photos">How to colorize old family photos</a> · <a href="/colorize-black-and-white-photo">Colorize a black and white photo</a> · <a href="/restore-old-family-photo">Restore old family photos</a></p>`;
+  return `<h2>More guides</h2><ul>${li.slice(0, 8).join("")}</ul>${hubs.length ? `<p>${hubs.join(" · ")}</p>` : ""}<p class="muted">General guides: <a href="/how-to-colorize-old-family-photos">How to colorize old family photos</a> · <a href="/colorize-black-and-white-photo">Colorize a black and white photo</a> · <a href="/restore-old-family-photo">Restore old family photos</a> · <a href="/colorize-old-vs-myheritage">Colorize Old vs MyHeritage</a></p>`;
 }
 function renderEra(p) {
   const e = SEO_ERA_BY[p.era];
@@ -218,13 +218,66 @@ function renderCombo(p) {
   return seoDoc(`Colorize ${e.label} ${o.noun[0].toUpperCase() + o.noun.slice(1)} (${e.years}) · Colorize Old`, `Colorizing ${e.label} ${o.noun}: what prints from ${e.years} are like, what to check in the colour, and a free same-session preview.`, p.path, body, [["Colorize Old", "/"], [e.label, "/colorize/" + e.id], [o.noun, p.path]]);
 }
 const seoRender = (p) => (p.type === "era" ? renderEra(p) : p.type === "occ" ? renderOcc(p) : renderCombo(p));
-function seoLlms() { return `# Colorize Old\n\n> Colorize Old adds estimated colour to black-and-white photos. One free upload preview is available on the home page with no card and no account. A one-time pack costs $12 for 50 credits (about $0.24 per photo); each credit colorizes one photo, used from a private credits page shown right after payment. There is no subscription. The colours are an AI estimate, not recovered original colours.\n\n## Pages\n- [Home: free upload preview and pricing](${SEO_ORIGIN}/)\n- [How to colorize old family photos](${SEO_ORIGIN}/how-to-colorize-old-family-photos)\n- [Colorize a black and white photo](${SEO_ORIGIN}/colorize-black-and-white-photo)\n- [Restore old family photos](${SEO_ORIGIN}/restore-old-family-photo)\n- [Guides by decade and occasion](${SEO_ORIGIN}/colorize/1940s): pages at /colorize/{decade}, /colorize/{occasion} and /colorize/{decade}/{occasion}\n\n## Facts\n- Model: Zhang et al. ECCV 2016 colorization, self-hosted by the site.\n- Price: $12 for 50 credits, one-time, paid by Stripe Checkout (${SEO_ORIGIN}/checkout). No account needed.\n- Backup: email one photo to fulfill@colorizeold.com with subject "Colorize order"; answered by hand, usually same day (Asia/Singapore business hours).\n- Contact: hello@colorizeold.com\n\n## Optional\n- [Full text for LLMs](${SEO_ORIGIN}/llms-full.txt)\n- [Sitemap](${SEO_ORIGIN}/sitemap.xml)\n`; }
+function seoLlms() { return `# Colorize Old\n\n> Colorize Old adds estimated colour to black-and-white photos. One free upload preview is available on the home page with no card and no account. A one-time pack costs $12 for 50 credits (about $0.24 per photo); each credit colorizes one photo, used from a private credits page shown right after payment. There is no subscription. The colours are an AI estimate, not recovered original colours.\n\n## Pages\n- [Home: free upload preview and pricing](${SEO_ORIGIN}/)\n- [How to colorize old family photos](${SEO_ORIGIN}/how-to-colorize-old-family-photos)\n- [Colorize a black and white photo](${SEO_ORIGIN}/colorize-black-and-white-photo)\n- [Restore old family photos](${SEO_ORIGIN}/restore-old-family-photo)\n- [Guides by decade and occasion](${SEO_ORIGIN}/colorize/1940s): pages at /colorize/{decade}, /colorize/{occasion} and /colorize/{decade}/{occasion}\n- [Colorize Old vs MyHeritage and Palette.fm](${SEO_ORIGIN}/colorize-old-vs-myheritage)\n\n## Facts\n- Model: Zhang et al. ECCV 2016 colorization, self-hosted by the site.\n- Price: $12 for 50 credits, one-time, paid by Stripe Checkout (${SEO_ORIGIN}/checkout). No account needed.\n- Backup: email one photo to fulfill@colorizeold.com with subject "Colorize order"; answered by hand, usually same day (Asia/Singapore business hours).\n- Contact: hello@colorizeold.com\n\n## Optional\n- [Full text for LLMs](${SEO_ORIGIN}/llms-full.txt)\n- [Sitemap](${SEO_ORIGIN}/sitemap.xml)\n`; }
 function seoLlmsFull() {
-  const out = [seoLlms(), "\n## FAQ\n- Is there a free trial? Yes: upload one black-and-white photo on the home page for a same-session colour preview.\n- What do I get for $12? 50 credits; each credit colorizes one photo, used from your private credits page. About $0.24 per photo. No subscription.\n- Do I need an account? No. Pay with Stripe and you land on a private credits page.\n- Known limit: a credit is spent before colorizing; if colorizing fails the credit is not returned automatically (email hello@colorizeold.com).\n- Are the colours accurate? No. They are plausible estimates; the true colour of clothing, cars or paint cannot be read from a grey photo.\n\n## Decades"];
+  const out = [seoLlms(), "\n## FAQ\n- Is there a free trial? Yes: upload one black-and-white photo on the home page for a same-session colour preview.\n- What do I get for $12? 50 credits; each credit colorizes one photo, used from your private credits page. About $0.24 per photo. No subscription.\n- Do I need an account? No. Pay with Stripe and you land on a private credits page.\n- If a colorize job fails or times out, that credit is not kept as used. If a credit still looks wrong, email hello@colorizeold.com.\n- Are the colours accurate? No. They are plausible estimates; the true colour of clothing, cars or paint cannot be read from a grey photo.\n\n## Decades"];
   for (const e of SEO_ERAS) out.push(`- ${e.label} (${e.years}): ${e.fact}`);
   out.push("\n## Occasions");
   for (const o of SEO_OCC) out.push(`- ${o.noun}: ${o.what} Check: ${o.check}`);
   return out.join("\n") + "\n";
+}
+
+function seoAcqVsMyheritage() {
+  const path = "/colorize-old-vs-myheritage";
+  const title = "Colorize Old vs MyHeritage (and Palette.fm): what each is for";
+  const desc = "A plain comparison of Colorize Old with MyHeritage photo colorization and Palette.fm: price shape, what you get, and when a one-time colorizer is enough versus a genealogy subscription.";
+  const body = `<h1>Colorize Old vs MyHeritage and other photo colorizers</h1>
+<p>Colorize Old adds estimated colour to black-and-white photos. It is a colorizer, not a genealogy research product. MyHeritage is a genealogy platform that also offers photo colorization and enhancement among other features. Palette.fm is another dedicated colorizer. This page compares the kind of product each one is, so you can pick the right tool. It is not a hands-on lab test of those other services, and it does not copy their current prices, which change.</p>
+<h2>What Colorize Old is</h2>
+<p>On the <a href="/">home page</a> you can upload one black-and-white photo for a same-session colour preview: no card and no account. A one-time pack is $12 for 50 credits (about $0.24 per photo). After payment you use credits on a private credits page. There is no subscription. The model is the publicly described Zhang et al. ECCV 2016 colorization, self-hosted by this site. The colours are an AI estimate, not recovered original colours.</p>
+<p>Guides: <a href="/how-to-colorize-old-family-photos">how to colorize old family photos</a>, <a href="/colorize-black-and-white-photo">colorize a black and white photo</a>, <a href="/restore-old-family-photo">restore old family photos</a>, and decade or occasion pages under <a href="/colorize/1940s">/colorize/&hellip;</a>.</p>
+<h2>How it compares</h2>
+<table>
+<thead><tr><th>Question</th><th>Colorize Old</th><th>MyHeritage</th><th>Palette.fm and similar colorizers</th></tr></thead>
+<tbody>
+<tr><td>Main job</td><td>Colorize black-and-white photos, with a free preview and a one-time credit pack.</td><td>Genealogy: family trees, historical records, and related photo tools, often including colorization and enhancement.</td><td>Dedicated photo colorization, usually with its own plans and editing controls.</td></tr>
+<tr><td>Account and subscription</td><td>No account. $12 once for 50 credits. No subscription.</td><td>Typically requires an account, and many features sit behind a genealogy subscription. Check MyHeritage's current terms.</td><td>Usually requires an account; plans vary. Check the vendor's current terms.</td></tr>
+<tr><td>Free try</td><td>One photo preview on this site, in the same session, no card.</td><td>MyHeritage has offered photo tools to signed-in users; availability and limits are theirs to set.</td><td>Many colorizers offer a limited free or trial result. Limits change.</td></tr>
+<tr><td>Genealogy records</td><td>None. This site does not search historical records or build family trees.</td><td>Yes, that is the core product.</td><td>Usually none; they colorize the file you upload.</td></tr>
+<tr><td>Accuracy of colours</td><td>Plausible estimates only. Clothing, cars, and paint colours cannot be read from a grey photo.</td><td>Also an estimate when a photo is colorized. A family tree does not recover true dye colours from a black-and-white print.</td><td>Also an estimate, with whatever controls that vendor provides.</td></tr>
+</tbody>
+</table>
+<p>Choose Colorize Old if you want a simple, one-time colorizer and a free preview without joining a genealogy service. Choose MyHeritage if you need family-history research and are happy to use their photo tools as part of that. Choose a dedicated colorizer such as Palette.fm if you want that vendor's particular editing style or plan. These can be complementary, not mutually exclusive.</p>
+${seoCta("vs-myheritage")}
+<h2>FAQ</h2>
+<dl>
+<dt>Is Colorize Old a MyHeritage alternative?</dt>
+<dd>Only for photo colorization. It is not an alternative to MyHeritage's family trees, historical records, or DNA features.</dd>
+<dt>Do I need a subscription to colorize photos here?</dt>
+<dd>No. The preview is free. More photos are $12 for 50 credits, one-time, used on a private credits page after payment. No account.</dd>
+<dt>If colorizing fails, do I lose a credit?</dt>
+<dd>If a job fails or times out, that credit is not kept as used. If a credit still looks wrong, email hello@colorizeold.com.</dd>
+<dt>Are the colours the original colours of the photograph?</dt>
+<dd>No. They are plausible estimates. The true colour of clothing, cars, or paint cannot be read from a grey photo.</dd>
+</dl>`;
+  const crumbs = [["Colorize Old", "/"], ["Colorize Old vs MyHeritage", path]];
+  const ld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "WebPage", name: title, description: desc, url: SEO_ORIGIN + path },
+      { "@type": "BreadcrumbList", itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c[0], item: SEO_ORIGIN + c[1] })) },
+      { "@type": "FAQPage", mainEntity: [
+        { "@type": "Question", name: "Is Colorize Old a MyHeritage alternative?", acceptedAnswer: { "@type": "Answer", text: "Only for photo colorization. It is not an alternative to MyHeritage's family trees, historical records, or DNA features." } },
+        { "@type": "Question", name: "Do I need a subscription to colorize photos here?", acceptedAnswer: { "@type": "Answer", text: "No. The preview is free. More photos are $12 for 50 credits, one-time, used on a private credits page after payment. No account." } },
+        { "@type": "Question", name: "If colorizing fails, do I lose a credit?", acceptedAnswer: { "@type": "Answer", text: "If a job fails or times out, that credit is not kept as used. If a credit still looks wrong, email hello@colorizeold.com." } },
+        { "@type": "Question", name: "Are the colours the original colours of the photograph?", acceptedAnswer: { "@type": "Answer", text: "No. They are plausible estimates. The true colour of clothing, cars, or paint cannot be read from a grey photo." } }
+      ]}
+    ]
+  };
+  return seoDoc(title, desc, path, body, crumbs).replace(
+    `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c[0], item: SEO_ORIGIN + c[1] })) })}</script>`,
+    `<script type="application/ld+json">${JSON.stringify(ld)}</script>`
+  );
 }
 function seoRoute(request, url, path, SITEMAP) {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
@@ -234,8 +287,9 @@ function seoRoute(request, url, path, SITEMAP) {
   if (path === "/sitemap.xml") {
     const n = seoReleased();
     const entries = SEO_PAGES.slice(0, n).map((p, i) => `  <url><loc>${SEO_ORIGIN}${p.path}</loc><lastmod>${seoLastmod(i)}</lastmod></url>`).join("\n");
-    return new Response(SITEMAP.replace("</urlset>", entries + "\n</urlset>"), { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=3600" } });
+    return new Response(SITEMAP.replace("</urlset>", entries + "\n  <url><loc>" + SEO_ORIGIN + "/colorize-old-vs-myheritage</loc><lastmod>2026-11-23</lastmod></url>\n</urlset>"), { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=3600" } });
   }
+  if (path === "/colorize-old-vs-myheritage" || path === "/colorize-old-vs-myheritage/") return new Response(seoAcqVsMyheritage(), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } });
   if (seoLive(path)) return new Response(seoRender(SEO_PAGES[SEO_IDX[path]]), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300", "x-content-type-options": "nosniff" } });
   return null;
 }
