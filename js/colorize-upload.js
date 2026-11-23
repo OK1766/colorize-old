@@ -5,9 +5,11 @@
 (function () {
   var MAX_BYTES = 10 * 1024 * 1024;
   var CHECKOUT = '/checkout?utm_source=lp&utm_campaign=upload_preview';
-  // CapEx $0 model host: same-origin worker proxy → mirror.opencv.ai (no R2; CORS-safe)
+  // CapEx $0 model host: same-origin worker proxy to a public Hugging Face ONNX (valid TLS + CORS),
+  // with the same file the site used before, then a same-file CDN fallback.
   var MODEL_URL = '/models/colorization_deploy_v2.onnx';
-  var MODEL_CDN_FALLBACK = 'https://mirror.opencv.ai/colorization_deploy_v2.onnx';
+  var MODEL_CDN_FALLBACK = 'https://huggingface.co/opencv/opencv_contribution/resolve/main/submissions/colorization/colorization_deploy_v2_2026april.onnx';
+  var MODEL_LOAD_MSG = 'Could not load the colorize engine. Check your connection and try again, or email one photo to free@colorizeold.com (subject: Free colorize trial).';
   var drop = document.getElementById('upload-drop');
   var input = document.getElementById('upload-input');
   var statusEl = document.getElementById('upload-status');
@@ -34,7 +36,7 @@
   }
 
   async function colorizeViaApi(file) {
-    setStatus('Colorizing… (Path A ONNX on demo server)');
+    setStatus('Colorizing…');
     var fd = new FormData();
     fd.append('file', file, file.name || 'photo.jpg');
     var res = await fetch('/api/colorize', { method: 'POST', body: fd });
@@ -43,15 +45,31 @@
     return URL.createObjectURL(blob);
   }
 
+  function modelLoadError(cause) {
+    var e = new Error('MODEL_LOAD');
+    e.code = 'MODEL_LOAD';
+    if (cause) e.cause = cause;
+    return e;
+  }
+  async function probeModelUrl(url) {
+    var res = await fetch(url, { headers: { Range: 'bytes=0-15' } });
+    if (!(res.ok || res.status === 206)) throw new Error('HTTP ' + res.status);
+    var cr = res.headers.get('content-range') || '';
+    var mm = /\/(\d+)\s*$/.exec(cr);
+    var total = mm ? parseInt(mm[1], 10) : parseInt(res.headers.get('content-length') || '0', 10);
+    if (total && total < 1000000) throw new Error('not a model (' + total + ' bytes)');
+    return true;
+  }
   async function getOrtSession() {
     if (ortSessionPromise) return ortSessionPromise;
     ortSessionPromise = (async function () {
-      if (typeof ort === 'undefined') throw new Error('ort missing');
+      if (typeof ort === 'undefined') throw modelLoadError(new Error('ort missing'));
       setStatus('Loading colorize engine (~123 MB first visit)…');
       var urls = [MODEL_URL, MODEL_CDN_FALLBACK];
       var lastErr;
       for (var i = 0; i < urls.length; i++) {
         try {
+          await probeModelUrl(urls[i]);
           return await ort.InferenceSession.create(urls[i], {
             executionProviders: ['wasm'],
             graphOptimizationLevel: 'all'
@@ -60,7 +78,7 @@
           lastErr = e;
         }
       }
-      throw lastErr || new Error('model load failed');
+      throw modelLoadError(lastErr);
     })();
     try {
       return await ortSessionPromise;
@@ -72,7 +90,7 @@
 
   async function colorizeViaOrt(file) {
     var session = await getOrtSession();
-    setStatus('Colorizing… (browser ONNX)');
+    setStatus('Colorizing in your browser…');
     var bmp = await createImageBitmap(file);
     var maxSide = 1600;
     var w = bmp.width, h = bmp.height;
@@ -174,26 +192,69 @@
       setStatus('File too large (max ~10 MB).');
       return;
     }
+    var jobId = null;
+    var held = false;
+    var timedOut = false;
+    var le = document.getElementById('left');
+    var timeoutMs = (window.COLORIZE_CREDIT_TIMEOUT_MS > 0) ? window.COLORIZE_CREDIT_TIMEOUT_MS : (8 * 60 * 1000);
+    function newJobId() {
+      var b = new Uint8Array(16);
+      (window.crypto || crypto).getRandomValues(b);
+      return Array.prototype.map.call(b, function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+    }
+    async function creditAction(action, id) {
+      var cr = await fetch('/api/credits/use', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token: window.COLORIZE_CREDIT_TOKEN, job_id: id, action: action }) });
+      var cj = await cr.json().catch(function () { return {}; });
+      if (le && typeof cj.left === 'number') le.textContent = cj.left;
+      cj._status = cr.status;
+      return cj;
+    }
+    if (window.COLORIZE_CREDIT_TOKEN) {
+      try {
+        jobId = newJobId();
+        var hj = await creditAction('hold', jobId);
+        if (!hj.ok) { setStatus(hj.left === 0 ? 'No credits left on this pack.' : 'Could not use a credit: ' + (hj.error || hj._status)); return; }
+        held = true;
+      } catch (ce) { setStatus('Could not reach the credits service. Try again.'); return; }
+    }
     var beforeUrl = URL.createObjectURL(file);
     drop.classList.add('busy');
+    var timer = null;
     try {
+      var work = (isProd || !isLocal) ? colorizeViaOrt(file) : colorizeViaApi(file).catch(function (apiErr) {
+        setStatus('Switching to in-browser colorizing…');
+        return colorizeViaOrt(file);
+      });
       var afterUrl;
-      if (isProd || !isLocal) {
-        // LIVE / pages.dev: browser ORT first (no demo API)
-        afterUrl = await colorizeViaOrt(file);
+      if (held) {
+        afterUrl = await Promise.race([
+          work,
+          new Promise(function (_, reject) {
+            timer = setTimeout(function () { timedOut = true; reject(new Error('timeout')); }, timeoutMs);
+          })
+        ]);
       } else {
-        try {
-          afterUrl = await colorizeViaApi(file);
-        } catch (apiErr) {
-          setStatus('Demo API unavailable — trying browser ONNX…');
-          afterUrl = await colorizeViaOrt(file);
+        afterUrl = await work;
+      }
+      if (timer) clearTimeout(timer);
+      if (held) {
+        var cj = null;
+        for (var ri = 0; ri < 3; ri++) {
+          try { cj = await creditAction('commit', jobId); if (cj && cj.ok) break; } catch (ce) { cj = null; }
         }
       }
       showPreview(beforeUrl, afterUrl);
-      setStatus('Done — free preview below. Soft paywall when you want more.');
+      setStatus(window.COLORIZE_CREDIT_TOKEN ? 'Done — 1 credit used. Download your color JPEG below.' : 'Done — your free preview is below.');
     } catch (e) {
+      if (timer) clearTimeout(timer);
+      if (held) {
+        try { await creditAction('release', jobId); } catch (re) {}
+      }
       console.error(e);
-      setStatus('Colorize failed: ' + (e && e.message ? e.message : e) + '. Prefer email backup below.');
+      if (timedOut) setStatus('Colorize timed out. Your credit was returned. Try again or use the email backup below.');
+      else if (e && e.code === 'MODEL_LOAD') setStatus(MODEL_LOAD_MSG + (held ? ' Your credit was returned.' : ''));
+      else if (held) setStatus('Colorize failed: ' + (e && e.message ? e.message : e) + '. Your credit was returned. Try again or use the email backup below.');
+      else setStatus('Colorize failed: ' + (e && e.message ? e.message : e) + '. Prefer email backup below.');
     } finally {
       drop.classList.remove('busy');
     }
