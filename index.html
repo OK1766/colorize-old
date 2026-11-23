@@ -28,12 +28,7 @@ h1{font-size:clamp(1.75rem,4vw,2.4rem);margin:0 0 .75rem}.lead{color:var(--muted
 .shot img{display:block;width:100%;height:auto}.shot figcaption{padding:.65rem 1rem;font-size:.85rem;color:var(--muted)}
 footer{margin-top:3rem;color:var(--muted);font-size:.85rem;border-top:1px solid #2a2f3a;padding-top:1.25rem}
 ul{color:var(--muted)}
-.paid-panel{display:none;border-color:#3d5a3a;background:#152018}
-.paid-panel.show{display:block}
-.paid-panel h2{margin:0 0 .5rem;color:#b8e0b0;font-size:1.35rem}
-.paid-panel .step{margin:.65rem 0;padding:.75rem 1rem;background:#0f1115;border-radius:10px;border:1px solid #2a3a2a}
-.paid-panel code,.paid-panel .mono,.mono{font-family:ui-monospace,monospace;color:var(--accent);word-break:break-all}
-.lp-default.hidden{display:none}
+.mono{font-family:ui-monospace,monospace;color:var(--accent);word-break:break-all}
 .trust{display:flex;flex-wrap:wrap;gap:.5rem .85rem;margin:1rem 0 0;padding:0;list-style:none;font-size:.85rem;color:var(--muted)}
 .trust li{display:flex;align-items:center;gap:.35rem}
 .trust li::before{content:"✓";color:var(--accent);font-weight:700}
@@ -126,17 +121,7 @@ ul{color:var(--muted)}
 </script>
 </head><body><main>
 
-<div class="card paid-panel" id="paid" aria-live="polite">
-<h2>Payment received — thanks</h2>
-<p style="margin:0 0 .75rem;color:var(--muted)">Your $12 · 50-credit pack is confirmed. Delivery is manual for this launch (usually same day Asia/Singapore business hours).</p>
-<div class="step"><strong>1.</strong> Email <strong>1 black-and-white photo</strong> (JPEG/PNG, max ~10&nbsp;MB) to<br/>
-<a class="mono" id="fulfill-mail" href="#">…</a></div>
-<noscript><div class="step"><strong>Email (copy):</strong> <span class="mono">fulfill@colorizeold.com</span> · subject <span class="mono">Colorize order</span></div></noscript>
-<div class="step"><strong>2.</strong> Subject line exactly: <span class="mono">Colorize order</span><br/>
-<small style="color:var(--muted)">Optional: Stripe receipt email in the body so we can match your payment.</small></div>
-<div class="step"><strong>3.</strong> We run Zhang ECCV16 colorization and reply with your <strong>colorized JPEG</strong>.</div>
-<p style="margin:.85rem 0 0;font-size:.85rem;color:var(--muted)">Questions? Same inbox. Bookmark <a style="color:var(--accent)" href="https://colorizeold.com/?paid=1">colorizeold.com/?paid=1</a>.</p>
-</div>
+
 
 <span class="badge">Colorize Old · one-time credits · no subscription</span>
 <h1>Colorize old photos — black &amp; white to natural color</h1>
@@ -254,17 +239,6 @@ ul{color:var(--muted)}
     var a=document.getElementById(id);
     if(a){ a.textContent=fulfillAddr; a.href=mailHref; }
   });
-  var q=new URLSearchParams(location.search);
-  if(q.get('paid')==='1'){
-    var p=document.getElementById('paid');
-    if(p){p.classList.add('show');}
-    var hideSelectors=['main > .badge','main > h1','main > .lead','#free-try','#buy-card','#how','#fulfill','#samples','#faq','.shot','main > .card:not(.paid-panel)','#sticky','main > h2','main > p'];
-    hideSelectors.forEach(function(sel){
-      document.querySelectorAll(sel).forEach(function(el){ el.classList.add('lp-default','hidden'); });
-    });
-    document.title='Payment received — Colorize Old Photos';
-    return;
-  }
   var sticky=document.getElementById('sticky');
   var buy=document.getElementById('buy-card');
   function onScroll(){
