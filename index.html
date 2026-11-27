@@ -147,7 +147,7 @@ ul{color:var(--muted)}
 </div>
 <div class="upload-actions">
 <a class="cta-secondary" id="upload-download" href="#" download="colorizeold-preview.jpg">Download color JPEG</a>
-<a class="cta" id="upload-pay" href="/checkout?utm_source=lp&amp;utm_campaign=upload_preview" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
+<a class="cta" id="upload-pay" href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
 </div>
 <p class="upload-next">The preview is one photo, in this browser only. To colorize the rest of an album (up to 50 photos) and keep a private page you can bookmark: $12 once, no account. The Stripe page says “50 credits” — that means 50 photos.</p>
 </div>
@@ -158,10 +158,11 @@ ul{color:var(--muted)}
 <p class="price">$12 · 50 photos</p>
 <p style="margin:0;color:var(--muted)"><strong style="color:var(--fg)">≈ $0.24 per photo</strong> · 1 photo = 1 colorized JPEG on your private page right after payment · the pack does not expire while we operate it. The Stripe page says “50 credits” — that means 50 photos.</p>
 <div class="cta-row">
-<a class="cta" href="/checkout?utm_source=lp&amp;utm_campaign=colorize_min&amp;utm_content=hero" id="buy" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
+<a class="cta" href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00" id="buy" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
 <a class="cta-secondary" href="#samples">See live samples</a>
 </div>
 <p class="pay-note">Pay securely with Stripe · one-time $12 · no subscription · no account. Checkout opens in a new tab so your preview stays here. The Stripe page says “50 credits” — that is 50 photos. After payment this site shows a private page you can bookmark.</p>
+<div id="checkout-help" hidden style="margin-top:.75rem;padding:.75rem 1rem;border:1px solid var(--line,#ddd4c6);border-radius:10px;background:#fff8e8;color:var(--fg)"><p style="margin:0">Stripe checkout opens in a new tab so this page — and your free preview — stays here. If a tab did not open, <a href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00" target="_blank" rel="noopener">continue to Stripe here</a>. If you cancel and land on stripe.com, close that tab; this page is still here.</p></div>
 <ul class="trust">
 <li>Same model as the samples below (Zhang ECCV16, self-hosted)</li>
 <li>Public-domain sample photos (no fake stock)</li>
@@ -196,14 +197,14 @@ ul{color:var(--muted)}
 <div class="card" style="text-align:center">
 <p class="price" style="margin:0 0 .35rem">Ready to colorize yours?</p>
 <p style="margin:0 0 .75rem;color:var(--muted)">$12 · 50 colorized photos · ≈ $0.24/photo · after your free preview</p>
-<a class="cta" href="/checkout?utm_source=lp&amp;utm_campaign=colorize_min&amp;utm_content=mid" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
+<a class="cta" href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a>
 <p class="pay-note">Pay securely with Stripe · one-time · no account. The Stripe page says “50 credits” — that is 50 photos, ready on a private page right after payment.</p>
 </div>
 
 <h2 id="faq">FAQ</h2>
 <details>
 <summary>Is there a free trial?</summary>
-<p>Yes — upload one black-and-white family photo in the free box at the top of this page for a same-session colorized preview. Then optional $12 · 50 photos via <a href="/checkout">/checkout</a>. Prefer email? <span class="mono"><a href="mailto:free@colorizeold.com">free@colorizeold.com</a></span> subject <span class="mono">Free colorize trial</span> (backup).</p>
+<p>Yes — upload one black-and-white family photo in the free box at the top of this page for a same-session colorized preview. Then optional $12 · 50 photos via <a href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00">/checkout</a>. Prefer email? <span class="mono"><a href="mailto:free@colorizeold.com">free@colorizeold.com</a></span> subject <span class="mono">Free colorize trial</span> (backup).</p>
 </details>
 <div class="faq">
 <details open>
@@ -232,7 +233,8 @@ ul{color:var(--muted)}
 
 <footer>© Colorize Old · <a style="color:var(--muted)" href="https://colorizeold.com/">colorizeold.com</a></footer>
 </main>
-<div class="sticky-cta" id="sticky"><div class="inner"><a class="cta" href="/checkout?utm_source=lp&amp;utm_campaign=colorize_min&amp;utm_content=sticky" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a><p class="sticky-note">Pay securely with Stripe · one-time · no account · 50 photos</p></div></div>
+<div class="sticky-cta" id="sticky"><div class="inner"><a class="cta" href="https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00" target="_blank" rel="noopener">Colorize 50 photos — $12 once</a><p class="sticky-note">Pay securely with Stripe · one-time · no account · 50 photos</p></div></div>
+<script>(function(){var h=document.getElementById('checkout-help');document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a');if(!a)return;var href=a.getAttribute('href')||'';if(href.indexOf('buy.stripe.com')===-1&&href.indexOf('/checkout')!==0&&href.indexOf('/buy')!==0)return;if(h){h.hidden=false;h.setAttribute('role','status');}},true);}());</script>
 <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.0/dist/ort.min.js" defer></script>
 <script src="/js/colorize-upload.js" defer></script>
 <script>
