@@ -4,7 +4,7 @@
  */
 (function () {
   var MAX_BYTES = 10 * 1024 * 1024;
-  var CHECKOUT = '/checkout?utm_source=lp&utm_campaign=upload_preview';
+  var CHECKOUT = 'https://buy.stripe.com/eVq7sLe8ugCA9db4Tt0gw00';
   // CapEx $0 model host: same-origin worker proxy to a public Hugging Face ONNX (valid TLS + CORS),
   // with the same file the site used before, then a same-file CDN fallback.
   var MODEL_URL = '/models/colorization_deploy_v2.onnx';
